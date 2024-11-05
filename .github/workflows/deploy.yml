@@ -3,11 +3,12 @@ name: Deploy Django to EC2
 on:
   push:
     branches:
-      - main
+      - main  # Adjust to your deployment branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: test  # Specify the "test" environment
 
     steps:
       - name: Checkout code
@@ -23,11 +24,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run Tests
+        run: |
+          python manage.py test
+
       - name: Deploy to EC2
         env:
           EC2_USER: ubuntu  # EC2 user (e.g., "ec2-user" for Amazon Linux, "ubuntu" for Ubuntu)
           EC2_HOST: ${{ secrets.EC2_HOST }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
+          
         run: |
           echo "$SSH_KEY" > ec2_key.pem
           chmod 600 ec2_key.pem
@@ -40,6 +46,7 @@ jobs:
             cd /home/$EC2_USER/app
             source venv/bin/activate  # Activate virtual environment
             pip install -r requirements.txt  # Install any new dependencies
+
             python manage.py migrate  # Run migrations
             python manage.py collectstatic --noinput  # Collect static files
 
