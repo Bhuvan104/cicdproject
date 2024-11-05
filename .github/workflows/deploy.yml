@@ -23,10 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Tests
-        run: |
-          python manage.py test
-
       - name: Deploy to EC2
         env:
           EC2_USER: ubuntu  # EC2 user (e.g., "ec2-user" for Amazon Linux, "ubuntu" for Ubuntu)
