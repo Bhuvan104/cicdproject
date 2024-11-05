@@ -38,7 +38,7 @@ jobs:
           chmod 600 ec2_key.pem
 
           # Disable host key checking and copy files to EC2 instance
-          scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $EC2_USER@$EC2_HOST:/home/$EC2_USER/app
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $EC2_USER@$EC2_HOST:/home/$EC2_USER/
 
           # Disable host key checking for SSH and restart the Django service
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $EC2_USER@$EC2_HOST << EOF
