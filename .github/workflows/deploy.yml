@@ -24,26 +24,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Print EC2 Host
+        run: |
+          echo "Deploying to EC2 host: ${{ secrets.EC2_HOST }}"
 
       - name: Deploy to EC2
         env:
           EC2_USER: ubuntu  # EC2 user (e.g., "ec2-user" for Amazon Linux, "ubuntu" for Ubuntu)
           EC2_HOST: ${{ secrets.EC2_HOST }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
-          
         run: |
           echo "$SSH_KEY" > ec2_key.pem
           chmod 600 ec2_key.pem
 
-          # Copy files to EC2 instance
-          scp -i ec2_key.pem -r ./* $EC2_USER@$EC2_HOST:/home/$EC2_USER/app
+          # Disable host key checking and copy files to EC2 instance
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $EC2_USER@$EC2_HOST:/home/$EC2_USER/app
 
-          # SSH into the EC2 instance and restart the Django service
-          ssh -i ec2_key.pem $EC2_USER@$EC2_HOST << EOF
+          # Disable host key checking for SSH and restart the Django service
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem $EC2_USER@$EC2_HOST << EOF
             cd /home/$EC2_USER/app
             source venv/bin/activate  # Activate virtual environment
             pip install -r requirements.txt  # Install any new dependencies
-
             python manage.py migrate  # Run migrations
             python manage.py collectstatic --noinput  # Collect static files
 
