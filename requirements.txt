@@ -1,0 +1,9 @@
+# Core Django and WSGI server
+Django==3.2.18  # Or the version your project is built on
+gunicorn==20.1.0  # A WSGI server to serve the Django app
+
+# Database adapter (choose one based on your database)
+psycopg2-binary==2.9.6  # For PostgreSQL
+# mysqlclient==2.1.1  # Uncomment this line if using MySQL instead
+
+# Any other packages your project depends on
