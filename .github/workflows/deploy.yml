@@ -38,11 +38,11 @@ jobs:
           chmod 600 ec2_key.pem
 
           # Disable host key checking and copy files to EC2 instance
-          scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $EC2_USER@$EC2_HOST:/home/$EC2_USER/
+          scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $EC2_USER@$EC2_HOST:/home/$EC2_USER/cicdproject
 
           # Disable host key checking for SSH and restart the Django service
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem $EC2_USER@$EC2_HOST << EOF
-            cd /home/$EC2_USER/app
+            cd /home/$EC2_USER/cicdproject
             source venv/bin/activate  # Activate virtual environment
             pip install -r requirements.txt  # Install any new dependencies
             python manage.py migrate  # Run migrations
@@ -50,5 +50,5 @@ jobs:
 
             # Restart Gunicorn or your WSGI server
             sudo systemctl restart gunicorn
-            sudo systemctl reload nginx  # Restart Nginx if you’re using it
+            sudo systemctl reload nginx
           EOF
